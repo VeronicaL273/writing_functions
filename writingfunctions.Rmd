@@ -164,18 +164,27 @@ data_marj =
   slice(-1) |> 
   mutate( drug = "marj")
 
-data_marj = 
+data_cocaine = 
   nsduh_html |> 
   html_table() |> 
   nth(4) |>
   slice(-1) |> 
   mutate( drug = "cocaine")
 
-data_marj = 
+data_heroin = 
   nsduh_html |> 
   html_table() |> 
-  nth(4) |>
+  nth(5) |>
   slice(-1) |> 
   mutate( drug = "heroin")
+
+
+source("./source/nsduh_table_format.R")
+bind_rows(
+  nsduh_table_format(html = nsduh_html, 1 ,"marj"),
+  nsduh_table_format(html = nsduh_html, 1 ,"marj"),
+  nsduh_table_format(html = nsduh_html, 1 ,"marj")
+)
+  
 ```
 
