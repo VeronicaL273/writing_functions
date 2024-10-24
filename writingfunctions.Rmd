@@ -39,7 +39,143 @@ z_scores(x_vec)
 does it always work?
 No, but we add some "if"s to control the properties of x_vec that go into the function
 
-```{r}
 
+### a new function
+```{r}
+mean_and_sd = function(x){
+  mean_x = mean(x)
+  sd_x = sd(x)
+  
+  out_df = tibble(
+    mean = mean_x,
+    sd = sd_x
+  )
+  
+  return(out_df)
+}
+
+mean_and_sd(x_vec)
+```
+
+
+
+```{r}
+sim_df =
+  tibble(
+    x = rnorm(30, 10, 5)
+  )
+sim_df |>
+  summarize(
+    mean = mean(x),
+    sd = sd(x)
+  )
+```
+
+Simulation function to check sample mean and sd.
+
+```{r}
+sim_mean_sd = function(samp_size, true_mean = 10, true_sd = 5){  #set default value
+  sim_df = 
+    tibble(
+      x = rnorm(samp_size, true_mean, true_sd)
+    )
+  
+  out_df = 
+    sim_df |>
+    summarize(
+      mean = mean(x),
+      sd = sd(x)
+    )
+  return(out_df)
+}
+
+sim_mean_sd(samp_size = 30, true_mean = 4,true_sd = 12)
+sim_mean_sd(samp_size = 4, true_mean = 12,true_sd = 30)
+
+sim_mean_sd(30,16,2)
+
+```
+
+
+
+```{r}
+fellowship_df = readxl::read_excel("./data/LotR_Words.xlsx", range = "B3:D6") |>
+  mutate(movie = "fellowship_ring") |>
+  janitor::clean_names()
+
+two_towers_df = readxl::read_excel("./data/LotR_Words.xlsx", range = "F3:H6") |>
+  mutate(movie = "two_towers") |>
+  janitor::clean_names()
+
+return_king_df = readxl::read_excel("./data/LotR_Words.xlsx", range = "J3:L6") |>
+  mutate(movie = "return_king") |>
+  janitor::clean_names()
+
+lotr_tidy = bind_rows(fellowship_df, two_towers_df, return_king_df) |>
+  janitor::clean_names() |>
+  pivot_longer(
+    female:male,
+    names_to = "sex",
+    values_to = "words") |> 
+  mutate(race = str_to_lower(race)) |> 
+  select(movie, everything())
+```
+
+
+```{r}
+lotr_load_and_tidy = function(path, range, movie_name) {
+  
+  df = 
+    readxl::read_excel(path, range = range) |>
+    janitor::clean_names() |>
+    pivot_longer(
+      female:male,
+      names_to = "sex",
+      values_to = "words") |>
+    mutate(
+      race = str_to_lower(race),
+      movie = movie_name) |> 
+    select(movie, everything())
+  
+  df
+  
+}
+
+lotr_tidy = 
+  bind_rows(
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "B3:D6", "fellowship_ring"),
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "F3:H6", "two_towers"),
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "J3:L6", "return_king"))
+
+
+```
+
+
+
+```{r}
+nsduh_url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+nsduh_html = read_html(nsduh_url)
+
+data_marj = 
+  nsduh_html |> 
+  html_table() |> 
+  nth(1) |>
+  slice(-1) |> 
+  mutate( drug = "marj")
+
+data_marj = 
+  nsduh_html |> 
+  html_table() |> 
+  nth(4) |>
+  slice(-1) |> 
+  mutate( drug = "cocaine")
+
+data_marj = 
+  nsduh_html |> 
+  html_table() |> 
+  nth(4) |>
+  slice(-1) |> 
+  mutate( drug = "heroin")
 ```
 
