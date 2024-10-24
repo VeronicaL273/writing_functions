@@ -1,0 +1,45 @@
+---
+title: "Writing Functions"
+author: "Yunjia Liu"
+date: "2024-10-24"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(rvest)
+```
+
+```{r}
+x_vec = rnorm(25, mean = 5, sd = 3)
+
+(x_vec - mean(x_vec)) / sd(x_vec)
+```
+
+
+```{r}
+z_scores = function(x) {
+  
+  if(!is.numeric(x)){.  #add additional
+    stop("x needs to be numeric")
+  }
+  
+  if(length(x)<5){
+    stop("you need at least 5 numbers to compute z score")
+  }
+  z = (x - mean(x)) / sd(x)
+  
+  return(z)
+  
+}
+
+z_scores(x_vec)
+```
+
+does it always work?
+No, but we add some "if"s to control the properties of x_vec that go into the function
+
+```{r}
+
+```
+
